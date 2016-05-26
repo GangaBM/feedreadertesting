@@ -62,7 +62,7 @@ $(function() {
          * hiding/showing of the menu element.
          */
          it("ensures menu element is hidden by default", function(){
-            expect($('body')).toHaveClass("menu-hidden"));
+            expect($('body').hasClass("menu-hidden")).toBe(true);
          });
 
          /* TODO: Write a test that ensures the menu changes
@@ -70,6 +70,16 @@ $(function() {
           * should have two expectations: does the menu display when
           * clicked and does it hide when clicked again.
           */
+          var menuIcon = $('.menu-icon-link');
+          it("hiding and showing the menu", function(){
+          
+                menuIcon.trigger('click');
+                expect($('body').hasClass('menu-hidden')).toBe(false);
+                
+                menuIcon.trigger('click');
+                expect($('body').hasClass('menu-hidden')).toBe(true);
+                
+            });
           });
     /* TODO: Write a new test suite named "Initial Entries" */
 
@@ -80,11 +90,43 @@ $(function() {
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
 
+         describe('Initial Entries', function(){
+            beforeEach(function(done){
+                loadFeed(0, done);
+                
+            });
+
+            it("ensures there's at least an element in the .feed container", function(){
+                console.log($('.feed'));
+                expect($(".feed").find('.entry').length).toBeGreaterThan(0);
+            
+            });
+
+         });
+
     /* TODO: Write a new test suite named "New Feed Selection"
 
         /* TODO: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
-    
+
+        describe('New Feed Selection', function(){
+            var previousContent, newContent;
+
+            beforeEach(function(){
+                loadFeed(0, function(){
+                    previousContent = $('.entry').html();
+                    done();
+                });
+            });
+
+            it('actually loads the next feed', function(done){
+                loadFeed(1, function(){
+                    newContent = $('.entry').html();
+                    expect(newContent).not.toBe(previousContent);
+                    done();
+                });
+            });
+        });
 }());
